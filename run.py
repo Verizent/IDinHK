@@ -15,18 +15,55 @@ intents = discord.Intents.default()
 bot = discord.Client(intents=intents)
 scheduler = AsyncIOScheduler()
 
+# Global Variable
+minRate = None
 
 @bot.event
 async def on_ready():
     print(f'Logged in as {bot.user}')
+    guild = bot.guilds[0]
     channel = bot.get_channel(CHANNEL_ID)
 
-    async def run_exchange_alert():
-        rate = checkCurrency().conversion_rate
-        if rate < 2100:
-            await channel.send(f"📈 Exchange rate alert: 1 IDR = {rate:.6f} HKD")
+    role = discord.utils.get(guild.roles, name="IDR Watchers")
+    # or use role = guild.get_role(role_id) if you know the role id
     
+    if not channel or not role:
+        print("❌ Could not find the channel or role. Check CHANNEL_ID or role name.")
+        return
+
+    async def reset_min_rate():
+        global minRate
+        rate = checkCurrency()
+        minRate = rate['conversion_rate']
+        await channel.send(
+            f"📊 **Weekly Exchange Tracker Reset!**\n"
+            f"🔁 Starting fresh this week with:\n"
+            f"🇮🇩 1 IDR = **{minRate:.2f} HKD 🇭🇰**\n"
+            f"Let’s monitor the market and catch the best rates! 💰📉\n\n"
+            f"{role.mention}"
+        )      
+    
+    async def run_exchange_alert():
+        global minRate
+        rate = checkCurrency()
+        rate = rate['conversion_rate']
+
+        if rate < minRate:
+            minRate = rate
+            await channel.send(
+                f"📉 **New Weekly Low Alert!**\n"
+                f"🚨 The exchange rate just dropped to:\n"
+                f"🇮🇩 1 IDR = **{rate:.2f} HKD 🇭🇰**\n"
+                f"Lowest so far this week – might be a good time to exchange! 💸\n\n"
+                f"{role.mention}"
+            )
+    
+    # Run both tasks once immediately
+    await reset_min_rate()
+    await run_exchange_alert()
+
     scheduler.add_job(run_exchange_alert, 'interval', hours=6)
+    scheduler.add_job(reset_min_rate, 'interval', weeks=1)
     scheduler.start()
 
 bot.run(TOKEN)
