@@ -62,9 +62,9 @@ async def on_ready():
     
     # Run both tasks once immediately
     # await reset_min_rate()
-    await run_exchange_alert()
+    # await run_exchange_alert()
 
-    scheduler.add_job(run_exchange_alert, 'interval', hours=6)
+    scheduler.add_job(run_exchange_alert, 'interval', hours=1)
     scheduler.add_job(reset_min_rate, 'cron', day_of_week='mon', hour=8)
     scheduler.start()
 
