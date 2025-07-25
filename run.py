@@ -40,7 +40,7 @@ async def on_ready():
         await channel.send(
             f"📊 **Weekly Exchange Tracker Reset!**\n"
             f"🔁 Starting fresh this week with:\n"
-            f"🇮🇩 1 IDR = **{minRate:.2f} HKD 🇭🇰**\n"
+            f"🇭🇰** 1 HKD = **{minRate:.2f} IDR 🇮 🇩\n"
             f"Let’s monitor the market and catch the best rates! 💰📉\n\n"
             f"{role.mention}"
         )      
@@ -55,7 +55,7 @@ async def on_ready():
             await channel.send(
                 f"📉 **New Weekly Low Alert!**\n"
                 f"🚨 The exchange rate just dropped to:\n"
-                f"🇮🇩 1 IDR = **{rate:.2f} HKD 🇭🇰**\n"
+                f"🇭🇭🇰🇰** 1 HKD = **{rate:.2f} IDR 🇮🇮 🇩🇩\n"
                 f"Lowest so far this week – might be a good time to exchange! 💸\n\n"
                 f"{role.mention}"
             )
