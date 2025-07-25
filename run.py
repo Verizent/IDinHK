@@ -7,6 +7,8 @@ import os
 from dotenv import load_dotenv
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
+from keep_run import keep_alive
+
 load_dotenv()
 TOKEN = os.getenv("DISCORD_TOKEN")
 CHANNEL_ID = int(os.getenv("CHANNEL_ID"))
@@ -66,5 +68,6 @@ async def on_ready():
     scheduler.add_job(reset_min_rate, 'interval', weeks=1)
     scheduler.start()
 
+keep_alive()
 bot.run(TOKEN)
 
