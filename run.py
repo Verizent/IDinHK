@@ -16,7 +16,10 @@ CHANNEL_ID = int(os.getenv("CHANNEL_ID"))
 
 intents = discord.Intents.default()
 bot = commands.Bot(command_prefix = "!", intents=intents)
+
 scheduler = AsyncIOScheduler()
+scheduler.configure(timezone='Asia/Jakarta')
+scheduler.start()
 
 # Global Variable
 minRate = 10000
@@ -67,7 +70,7 @@ async def on_ready():
     # await reset_min_rate()
     # await run_exchange_alert()
 
-    scheduler.add_job(run_exchange_alert, 'cron', hour=8, minute=45)
+    scheduler.add_job(run_exchange_alert, 'cron', hour=9)
     scheduler.add_job(reset_min_rate, 'cron', day_of_week='mon', hour=8)
     scheduler.start()
 
