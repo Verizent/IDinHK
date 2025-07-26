@@ -15,6 +15,7 @@ TOKEN = os.getenv("DISCORD_TOKEN")
 CHANNEL_ID = int(os.getenv("CHANNEL_ID"))
 
 intents = discord.Intents.default()
+intents.message_content = True # enable privileged message content intent
 bot = commands.Bot(command_prefix = "!", intents=intents)
 
 scheduler = AsyncIOScheduler()
