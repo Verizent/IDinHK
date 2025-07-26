@@ -3,6 +3,7 @@ from my_requests.checkCurrency import checkCurrency
 # print(checkCurrency())
 
 import discord
+from discord.ext import commands
 import os
 from dotenv import load_dotenv
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
@@ -14,7 +15,7 @@ TOKEN = os.getenv("DISCORD_TOKEN")
 CHANNEL_ID = int(os.getenv("CHANNEL_ID"))
 
 intents = discord.Intents.default()
-bot = discord.Client(intents=intents)
+bot = commands.Bot(command_prefix = "!", intents=intents)
 scheduler = AsyncIOScheduler()
 
 # Global Variable
@@ -29,6 +30,8 @@ async def on_ready():
     role = discord.utils.get(guild.roles, name="IDR Watchers")
     # or use role = guild.get_role(role_id) if you know the role id
     
+    await bot.tree.sync()
+
     if not channel or not role:
         print("❌ Could not find the channel or role. Check CHANNEL_ID or role name.")
         return
@@ -67,6 +70,14 @@ async def on_ready():
     scheduler.add_job(run_exchange_alert, 'interval', hours=24)
     scheduler.add_job(reset_min_rate, 'cron', day_of_week='mon', hour=8)
     scheduler.start()
+
+@bot.tree.command(name="currentrate", description="Check current HKD to IDR rate")
+async def currentrate(interaction: discord.Interaction):
+    rate = checkCurrency()['conversion_rate']
+    await interaction.response.send_message(
+        f"📉 **Current Exchange Rate!**\n"
+        f"🇭🇰 **1 HKD = {rate:.2f} IDR** 🇮🇩"
+    )
 
 keep_alive()
 bot.run(TOKEN)
